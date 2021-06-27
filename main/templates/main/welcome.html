@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+
+    <div style="font-size:14px; color:#999; margin-left:15px; text-align:right"> Last updated: {{ update_time }} </div>
+    <br>
+
+    <div class="container-fluid row  justify-content-center">
+          <div class="col-2 container-sm">
+            <span style="color:#858796 ;margin-right:5px;">Select a Country:</span>
+            <form method="GET"  class="-align-left"> {% csrf_token %}
+                <select class="selectpicker -align-left" name = "select_country" onChange="this.form.submit();">
+                    {% if country %}
+                        <option value="{{ country }}" selected >{{ country }}</option>
+
+                    {% endif %}
+
+                    {% for country in list_country %}
+                    <option value="{{ country}}">{{ country }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+
+            <div class="col-1">
+                {% if country %}
+                     <h3 style="color:#858796">{{ country }}</h3>
+                {% else %}
+                    <h3 style="color:#858796">Global</h3>
+                {% endif %}
+            </div>
+            <div class="container-sm column mr-auto ml-auto mb-auto col-2">
+                <div class="text-center" style="color:#858796">
+                    <h2 style="color:blue" id="recovered">{{ recovered }}</h2>
+                    <span >Recovered</span>
+                </div>
+            </div>
+            <div class="container-sm column mr-auto ml-auto mb-auto col-2">
+                <div class="text-center" style="color:#858796">
+                    <h2 style="color:orange" id="confirmed">{{ confirmed }}</h2>
+                    <span class="text-center">Confirmed</span>
+                </div>
+            </div>
+            <div class="container-sm column mr-auto ml-auto mb-auto col-2">
+                <div class="text-center" style="color:#858796">
+                    <h2 style="color:red" id="deaths">{{ deaths }}</h2>
+                    <p class="text-center mb-0">Deaths</p>
+                </div>
+            </div>
+
+    </div>
+    <div class="container-fluid" style="margin: 10px 5px 10px 30px;">
+        <figure class="highcharts-figure" >
+        <div id="container" ></div>
+        </figure>
+    </div>
+    <div>
+
+
+    <script>
+        let list_confirmed_7 = {{list_confirmed_7}};
+        let list_day_7 = {{list_day_7|safe}};
+        let list_death_7 = {{list_death_7|safe}};
+
+        Highcharts.chart('container', {
+
+            title: {
+            text: 'New cases/New deaths in the lastest 7 days'
+            },
+
+            yAxis: {
+            title: {
+            text: 'Nbr of cases'
+            }
+            },
+
+            xAxis: {
+                categories: list_day_7,
+                crosshair: true,
+                accessibility: {
+                rangeDescription: 'Dates'
+            }
+            },
+
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle'
+            },
+
+            plotOptions: {
+                series: {
+
+                    dataLabels: {
+                        enabled: true
+                    }
+                }
+            },
+
+            series: [
+                {
+                    name: 'New cases',
+                    data: list_confirmed_7,
+                    color: 'orange'
+                },
+                 {
+                    name: 'New deaths',
+                    data: list_death_7,
+                    color: 'red',
+                }],
+
+            responsive: {
+            rules: [{
+            condition: {
+            maxWidth: 500
+            },
+            chartOptions: {
+            legend: {
+              layout: 'horizontal',
+              align: 'center',
+              verticalAlign: 'bottom'
+            }
+            }
+            }]
+            }
+
+        });
+    </script>
+
+
+
+{% endblock %}
