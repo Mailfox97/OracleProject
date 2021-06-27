@@ -6,9 +6,10 @@ import os
 
 
 def drop_all_table():
-    list_table = ["country", "covid_history", "covid_history_global"]
+    list_table = ["COUNTRY", "COVID_HISTORY", "COVID_HISTORY_GLOBAL"]
     for table in list_table:
         if check_exist(table):
+            print("Drop table>>>")
             sql_ddl(f"drop table {table}")
 
 def create_all_table():
